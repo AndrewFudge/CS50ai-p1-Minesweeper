@@ -199,29 +199,29 @@ class MinesweeperAI():
             5) add any new sentences to the AI's knowledge base
                if they can be inferred from existing knowledge
         """
+        self.moves_made.add(cell)
+        self.mark_safe(cell)
         known_mines_count = 0
         neighbours = set()
-        if cell not in self.moves_made:
-            self.moves_made.add(cell)
-            self.safes.add(cell)
-            # cell is (row, column)
-            # loop through each neighbour cell
-            # unsure how to handle negative index?
-            # row -1 is left and 0 is current and +1 is right
-            for row in range(cell[0] - 1, cell[0] +2):
-                for collumn in range(cell[1] -1, cell[1] + 2):
-                    # if it is the working cell, skip
-                    if (row, collumn) == cell:
-                        continue
-                    # check we wont go out of range
-                    if 0 <= row < self.height and \
-                        0 <= collumn < self.width:
-                        # if it is a mine, add to a counter
-                        if (row, collumn) in self.mines:
-                            known_mines_count += 1
-                        # if unknown add to neighbours to add later
-                        elif (row, collumn) not in self.safes:
-                            neighbours.add((row, collumn))
+        
+        # cell is (row, column)
+        # loop through each neighbour cell
+        # unsure how to handle negative index?
+        # row -1 is left and 0 is current and +1 is right
+        for row in range(cell[0] - 1, cell[0] +2):
+            for collumn in range(cell[1] -1, cell[1] + 2):
+                # if it is the working cell, skip
+                if (row, collumn) == cell:
+                    continue
+                # check we wont go out of range
+                if 0 <= row < self.height and \
+                    0 <= collumn < self.width:
+                    # if it is a mine, add to a counter
+                    if (row, collumn) in self.mines:
+                        known_mines_count += 1
+                    # if unknown add to neighbours to add later
+                    elif (row, collumn) not in self.safes:
+                        neighbours.add((row, collumn))
         #  add to knowledge db
         adjusted_count = count - known_mines_count
 
