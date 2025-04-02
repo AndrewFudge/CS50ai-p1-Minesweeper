@@ -221,7 +221,7 @@ class MinesweeperAI():
                             known_mines_count += 1
                         # if unknown add to neighbours to add later
                         elif (row, collumn) not in self.safes:
-                            neighbours.add(row, collumn)
+                            neighbours.add((row, collumn))
         #  add to knowledge db
         adjusted_count = count - known_mines_count
 
@@ -243,11 +243,11 @@ class MinesweeperAI():
             for sentence in self.knowledge:
                 mines = sentence.known_mines()
                 safes = sentence.known_safes() 
-            # Add to a set to process
-            if mines:
-                new_mines.update(mines)
-            if safes:
-                new_safes.update(safes)
+                # Add to a set to process
+                if mines:
+                    new_mines.update(mines)
+                if safes:
+                    new_safes.update(safes)
             # update the mine set and set to updated to loop again
             for mine in new_mines:
                 if mine not in self.mines:
@@ -285,7 +285,10 @@ class MinesweeperAI():
         This function may use the knowledge in self.mines, self.safes
         and self.moves_made, but should not modify any of those values.
         """
-        raise NotImplementedError
+        for move in self.safes:
+            if move not in self.moves_made:
+                return move
+        return None
 
     def make_random_move(self):
         """
@@ -294,4 +297,20 @@ class MinesweeperAI():
             1) have not already been chosen, and
             2) are not known to be mines
         """
-        raise NotImplementedError
+        #  wont work as can't break if all moves are done
+        # move = (
+        #     random.randint(0, self.height +1),
+        #     random.randint(0, self.width +1)
+        #     )
+        # while move in self.moves_made:
+        #     move = (
+        #         random.randint(0, self.height +1),
+        #         random.randint(0, self.width +1)
+        #         )
+        all_cells = set(itertools.product(range(self.height), range(self.width)))
+        possible_moves = list(all_cells - self.moves_made - self.mines)
+        if possible_moves:
+            return random.choice(possible_moves)
+        else:
+            return None
+        
