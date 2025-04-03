@@ -2,7 +2,7 @@ import itertools
 import random
 
 
-class Minesweeper():
+class Minesweeper:
     """
     Minesweeper game representation
     """
@@ -84,7 +84,7 @@ class Minesweeper():
         return self.mines_found == self.mines
 
 
-class Sentence():
+class Sentence:
     """
     Logical statement about a Minesweeper game
     A sentence consists of a set of board cells,
@@ -132,7 +132,7 @@ class Sentence():
         # check it is in the list, remove it and reduce count
         if cell in self.cells:
             self.cells.remove(cell)
-            self.count -=1
+            self.count -= 1
             self.mine_cell.add(cell)
 
     def mark_safe(self, cell):
@@ -145,7 +145,7 @@ class Sentence():
             self.safe_cell.add(cell)
 
 
-class MinesweeperAI():
+class MinesweeperAI:
     """
     Minesweeper game player
     """
@@ -203,19 +203,18 @@ class MinesweeperAI():
         self.mark_safe(cell)
         known_mines_count = 0
         neighbours = set()
-        
+
         # cell is (row, column)
         # loop through each neighbour cell
         # unsure how to handle negative index?
         # row -1 is left and 0 is current and +1 is right
-        for row in range(cell[0] - 1, cell[0] +2):
-            for collumn in range(cell[1] -1, cell[1] + 2):
+        for row in range(cell[0] - 1, cell[0] + 2):
+            for collumn in range(cell[1] - 1, cell[1] + 2):
                 # if it is the working cell, skip
                 if (row, collumn) == cell:
                     continue
                 # check we wont go out of range
-                if 0 <= row < self.height and \
-                    0 <= collumn < self.width:
+                if 0 <= row < self.height and 0 <= collumn < self.width:
                     # if it is a mine, add to a counter
                     if (row, collumn) in self.mines:
                         known_mines_count += 1
@@ -227,7 +226,7 @@ class MinesweeperAI():
 
         if neighbours:
             self.knowledge.append(Sentence(neighbours, adjusted_count))
-            
+
         self.update_knowledge()
 
     def update_knowledge(self):
@@ -242,7 +241,7 @@ class MinesweeperAI():
             #  Get all mines and safe squares
             for sentence in self.knowledge:
                 mines = sentence.known_mines()
-                safes = sentence.known_safes() 
+                safes = sentence.known_safes()
                 # Add to a set to process
                 if mines:
                     new_mines.update(mines)
@@ -256,22 +255,30 @@ class MinesweeperAI():
             for safe in new_safes:
                 self.mark_safe(safe)
                 updated = True
-            
+
             # clear empty sentences
-            self.knowledge = [sentence_ for sentence_ in self.knowledge if sentence_.cells]
+            self.knowledge = [
+                sentence_ for sentence_ in self.knowledge if sentence_.cells
+            ]
 
             # Generate new sentences by combining
             new_sentences = []
             for sentence_1 in self.knowledge:
                 for sentence_2 in self.knowledge:
-                    if sentence_1 != sentence_2 and sentence_2.cells.issubset(sentence_1.cells) and sentence_2.cells:
+                    if (
+                        sentence_1 != sentence_2
+                        and sentence_2.cells.issubset(sentence_1.cells)
+                        and sentence_2.cells
+                    ):
                         new_cells = sentence_1.cells - sentence_2.cells
                         new_count = sentence_1.count - sentence_2.count
                         # if more than 1 mine, new sentence
                         if new_count >= 0:
-                            inferred_sentence = Sentence(new_cells, new_count) 
-                            if inferred_sentence not in self.knowledge and \
-                                inferred_sentence not in new_sentences:
+                            inferred_sentence = Sentence(new_cells, new_count)
+                            if (
+                                inferred_sentence not in self.knowledge
+                                and inferred_sentence not in new_sentences
+                            ):
                                 new_sentences.append(inferred_sentence)
                                 updated = True
             self.knowledge.extend(new_sentences)
@@ -313,4 +320,3 @@ class MinesweeperAI():
             return random.choice(possible_moves)
         else:
             return None
-        
