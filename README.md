@@ -3,8 +3,8 @@ A minsweeper game with an AI that finds sade moves. If no safe moves are found t
 AI uses a knowledge database to infer safe squares.
 
 # Requirements
-Python 3.12.6
-pygame
+- Python 3.12.6
+- pygame
 
 # To run
 run command `python runner.py`
